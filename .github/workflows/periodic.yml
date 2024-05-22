@@ -25,8 +25,10 @@ jobs:
           node_image: kindest/node:v1.29.2
       - name: Change Permissions
         run: |
-          sudo chown -R $USER:$USER /var/lib/apt/lists/
-          sudo chown -R $USER:$USER /var/cache/apt/
+          sudo chmod -R 777 /var/lib/apt/lists/
+          sudo chmod -R 777 /var/cache/apt/
+          sudo chmod -R 777 /var/lib/dpkg/
+          sudo chmod -R 777 /var/log/apt/
       - name: Install System Dependencies
         run: |
           sudo apt-get update -y
