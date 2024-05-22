@@ -23,6 +23,10 @@ jobs:
           kubectl_version: v1.29.2
           version: v0.22.0
           node_image: kindest/node:v1.29.2
+      - name: Change Permissions
+        run: |
+          sudo chown -R $USER:$USER /var/lib/apt/lists/
+          sudo chown -R $USER:$USER /var/cache/apt/
       - name: Install System Dependencies
         run: |
           sudo apt-get update -y
