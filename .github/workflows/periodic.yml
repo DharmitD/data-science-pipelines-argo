@@ -11,6 +11,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: Debugging Environment
+        run: |
+          whoami
+          sudo ls -la /var/lib/apt/lists/
+          sudo ls -la /var/cache/apt/
       - name: Create k8s Kind Cluster
         uses: container-tools/kind-action@v2
         with:
