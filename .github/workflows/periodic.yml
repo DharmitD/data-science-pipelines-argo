@@ -21,16 +21,9 @@ jobs:
           kubectl_version: v1.29.2
           version: v0.22.0
           node_image: kindest/node:v1.29.2
-      - name: Change Ownership and Permissions
+      - name: Install System Dependencies in Fresh Shell
         run: |
-          sudo chown -R $(whoami) /var/lib/apt/lists
-          sudo chown -R $(whoami) /var/cache/apt
-          sudo chown -R $(whoami) /var/lib/dpkg
-          sudo chown -R $(whoami) /var/log/apt
-          sudo chmod -R 777 /var/lib/apt/lists/
-          sudo chmod -R 777 /var/cache/apt/
-          sudo chmod -R 777 /var/lib/dpkg/
-          sudo chmod -R 777 /var/log/apt/
+          sudo /bin/sh -c 'apt-get update -y && apt-get install -y python3-pip && apt-get install -y curl'
       - name: Install System Dependencies
         run: |
           sudo apt-get update -y
