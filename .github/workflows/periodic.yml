@@ -21,8 +21,12 @@ jobs:
           kubectl_version: v1.29.2
           version: v0.22.0
           node_image: kindest/node:v1.29.2
-      - name: Change Permissions
+      - name: Change Ownership and Permissions
         run: |
+          sudo chown -R $(whoami) /var/lib/apt/lists
+          sudo chown -R $(whoami) /var/cache/apt
+          sudo chown -R $(whoami) /var/lib/dpkg
+          sudo chown -R $(whoami) /var/log/apt
           sudo chmod -R 777 /var/lib/apt/lists/
           sudo chmod -R 777 /var/cache/apt/
           sudo chmod -R 777 /var/lib/dpkg/
