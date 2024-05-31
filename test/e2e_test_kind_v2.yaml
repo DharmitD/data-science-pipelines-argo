@@ -34,7 +34,7 @@ spec:
     - name: basic-e2e-tests-image-suffix
       value: basic-e2e-tests
     - name: cluster-type
-      value: gke
+      value: kind
     - name: namespace
       value: kubeflow
   templates:
