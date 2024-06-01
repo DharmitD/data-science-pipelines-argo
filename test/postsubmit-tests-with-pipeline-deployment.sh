@@ -1,25 +1,9 @@
 #!/bin/bash
-#
-# Copyright 2018 The Kubeflow Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 set -ex
 
-usage()
-{
+usage() {
     echo "usage: deploy.sh
-    [--platform             the deployment platform. Valid values are: [gcp, minikube]. Default is gcp.]
+    [--platform             the deployment platform. Valid values are: [kind, minikube]. Default is kind.]
     [--kfp_deployment       the deployment method of kfp. Valid values are: [standalone, mkp]. Default is standalone.]
     [--workflow_file        the file name of the argo workflow to run]
     [--test_result_bucket   the gcs bucket that argo workflow store the result to. Default is ml-pipeline-test
@@ -28,7 +12,7 @@ usage()
     [-h help]"
 }
 
-PLATFORM=gcp
+PLATFORM=kind
 PROJECT=ml-pipeline-test
 KFP_DEPLOYMENT=standalone
 TEST_RESULT_BUCKET=ml-pipeline-test
@@ -38,7 +22,7 @@ TARGET_IMAGE_BASE_DIR=gcr.io/ml-pipeline-test/${PULL_BASE_SHA}
 TIMEOUT_SECONDS=1800
 NAMESPACE=kubeflow
 IS_INTEGRATION_TEST=false
-ENABLE_WORKLOAD_IDENTITY=true
+ENABLE_WORKLOAD_IDENTITY=false
 COMMIT_SHA="$PULL_BASE_SHA"
 
 while [ "$1" != "" ]; do
@@ -74,7 +58,6 @@ while [ "$1" != "" ]; do
 done
 
 # Variables
-# Refer to https://github.com/kubernetes/test-infra/blob/e357ffaaeceafe737bd6ab89d2feff132d92ea50/prow/jobs.md for the Prow job environment variables
 TEST_RESULTS_GCS_DIR=gs://${TEST_RESULT_BUCKET}/${PULL_BASE_SHA}/${TEST_RESULT_FOLDER}
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null && pwd)"
 
@@ -85,50 +68,6 @@ fi
 echo "postsubmit test starts"
 
 source "${DIR}/test-prep.sh"
-
-## Wait for the cloudbuild job to be started
-CLOUDBUILD_TIMEOUT_SECONDS=3600
-PULL_CLOUDBUILD_STATUS_MAX_ATTEMPT=$(expr ${CLOUDBUILD_TIMEOUT_SECONDS} / 20 )
-CLOUDBUILD_STARTED=TIMEOUT
-CLOUDBUILD_FILTER="substitutions.COMMIT_SHA:${PULL_BASE_SHA} AND tags:build-each-commit"
-
-for i in $(seq 1 ${PULL_CLOUDBUILD_STATUS_MAX_ATTEMPT})
-do
-  output=`gcloud builds list --project="$CLOUDBUILD_PROJECT" --filter="$CLOUDBUILD_FILTER"`
-  if [[ ${output} != "" ]]; then
-    CLOUDBUILD_STARTED=True
-    break
-  fi
-  sleep 20
-done
-
-if [[ ${CLOUDBUILD_STARTED} == TIMEOUT ]];then
-  echo "Wait for cloudbuild job to start, timeout exiting..."
-  exit 1
-fi
-
-## Wait for the cloudbuild job to complete
-CLOUDBUILD_FINISHED=TIMEOUT
-for i in $(seq 1 ${PULL_CLOUDBUILD_STATUS_MAX_ATTEMPT})
-do
-  output=`gcloud builds list --project="$CLOUDBUILD_PROJECT" --filter="$CLOUDBUILD_FILTER"`
-  if [[ ${output} == *"SUCCESS"* ]]; then
-    CLOUDBUILD_FINISHED=SUCCESS
-    break
-  elif [[ ${output} == *"FAILURE"* ]]; then
-    CLOUDBUILD_FINISHED=FAILURE
-    break
-  fi
-  sleep 20
-done
-
-if [[ ${CLOUDBUILD_FINISHED} == FAILURE ]];then
-  echo "Cloud build failure, postsubmit tests cannot proceed. exiting..."
-  exit 1
-elif [[ ${CLOUDBUILD_FINISHED} == TIMEOUT ]];then
-  echo "Wait for cloudbuild job to finish, timeout exiting..."
-  exit 1
-fi
 
 source "${DIR}/deploy-cluster.sh"
 echo "cluster deployed"
