@@ -16,19 +16,14 @@
 
 set -x
 
-ZONE=${ZONE:-us-west1-b}
-if [[ ! -z "${GOOGLE_APPLICATION_CREDENTIALS}" ]]; then
-  # activating the service account
-  gcloud auth activate-service-account --key-file="${GOOGLE_APPLICATION_CREDENTIALS}"
-fi
-gcloud config set compute/zone ${ZONE}
-gcloud config set core/project ${PROJECT}
+# Ensure the kubeflow namespace exists
+kubectl create namespace kubeflow || true
 
-#Uploading the source code to GCS:
-local_code_archive_file=$(mktemp)
-date_string=$(TZ=PST8PDT date +%Y-%m-%d_%H-%M-%S_%Z)
-code_archive_prefix="${TEST_RESULTS_GCS_DIR}/source_code"
-remote_code_archive_uri="${code_archive_prefix}_${PULL_BASE_SHA}_${date_string}.tar.gz"
+# If your tests need specific setup, you can add those here.
+# For example, setting up any required CRDs, services, etc.
 
-tar -czf "$local_code_archive_file" .
-gsutil cp "$local_code_archive_file" "$remote_code_archive_uri"
+# Sample setup: Apply some manifests (this is just an example, replace with your actual setup)
+# kubectl apply -f some-manifest.yaml -n kubeflow
+
+# Set up any other environment variables or configuration as needed
+echo "Test environment setup for Kind cluster is complete"
