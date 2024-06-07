@@ -62,6 +62,7 @@ replace (
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.9.1
 	github.com/go-git/go-git/v5 => github.com/go-git/go-git/v5 v5.11.0
 	github.com/go-jose/go-jose/v3 => github.com/go-jose/go-jose/v3 v3.0.1
+	github.com/jackc/pgx/v5 v5.4.2 => github.com/jackc/pgx/v5 v5.5.4
 	google.golang.org/grpc => google.golang.org/grpc v1.56.3
 )
 
