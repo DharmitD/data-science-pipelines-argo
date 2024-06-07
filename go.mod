@@ -60,6 +60,7 @@ require (
 
 replace (
 	github.com/argoproj/argo-events v0.17.1-0.20220223155401-ddda8800f9f8 => github.com/argoproj/argo-events v1.7.1
+	github.com/cloudevents/sdk-go/v2 v2.10.0 => github.com/cloudevents/sdk-go/v2 v2.15.1
 	github.com/gin-gonic/gin => github.com/gin-gonic/gin v1.9.1
 	github.com/go-git/go-git/v5 => github.com/go-git/go-git/v5 v5.11.0
 	github.com/go-jose/go-jose/v3 => github.com/go-jose/go-jose/v3 v3.0.1
