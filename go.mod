@@ -200,6 +200,7 @@ require (
 )
 
 replace (
+	github.com/dgrijalva/jwt-go/v3 v3.2.0+incompatible => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/kubeflow/kfp-tekton/tekton-catalog/cache => github.com/kubeflow/kfp-tekton/tekton-catalog/cache v0.0.0-20231127195001-a75d4b3711ff
 	github.com/kubeflow/kfp-tekton/tekton-catalog/objectstore => github.com/kubeflow/kfp-tekton/tekton-catalog/objectstore v0.0.0-20231127195001-a75d4b3711ff
 	k8s.io/api => k8s.io/api v0.25.9
