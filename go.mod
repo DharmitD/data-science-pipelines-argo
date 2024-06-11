@@ -70,6 +70,7 @@ replace (
 	github.com/labstack/echo v3.2.1+incompatible => github.com/labstack/echo/v4 v4.2.0
 	github.com/nats-io/nats-server/v2 v2.7.2 => github.com/nats-io/nats-server/v2 v2.10.2
 	github.com/nats-io/nkeys v0.4.5 => github.com/nats-io/nkeys v0.4.6
+	go.opentelemetry.io/contrib v0.20.0 => go.opentelemetry.io/contrib v0.24.0
 	google.golang.org/grpc => google.golang.org/grpc v1.56.3
 )
 
