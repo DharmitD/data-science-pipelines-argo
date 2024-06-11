@@ -196,6 +196,7 @@ replace (
 	golang.org/x/net v0.19.0 => golang.org/x/net v0.23.0
 	golang.org/x/net v0.21.0 => golang.org/x/net v0.23.0
 	google.golang.org/grpc => google.golang.org/grpc v1.56.3
+	nhooyr.io/websocket v1.8.6 => nhooyr.io/websocket v1.8.7
 )
 
 go 1.21
