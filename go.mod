@@ -194,6 +194,7 @@ replace (
 	github.com/nats-io/nkeys v0.4.5 => github.com/nats-io/nkeys v0.4.6
 	go.opentelemetry.io/contrib v0.20.0 => go.opentelemetry.io/contrib v1.27.0
 	golang.org/x/net v0.19.0 => golang.org/x/net v0.23.0
+	golang.org/x/net v0.21.0 => golang.org/x/net v0.23.0
 	google.golang.org/grpc => google.golang.org/grpc v1.56.3
 )
 
