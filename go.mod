@@ -69,6 +69,7 @@ replace (
 	github.com/jackc/pgx/v5 v5.4.2 => github.com/jackc/pgx/v5 v5.5.4
 	github.com/labstack/echo v3.2.1+incompatible => github.com/labstack/echo/v4 v4.2.0
 	github.com/nats-io/nats-server/v2 v2.7.2 => github.com/nats-io/nats-server/v2 v2.10.2
+	github.com/nats-io/nkeys v0.4.5 => github.com/nats-io/nkeys v0.4.6
 	google.golang.org/grpc => google.golang.org/grpc v1.56.3
 )
 
