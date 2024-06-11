@@ -40,7 +40,7 @@ require (
 	github.com/spf13/viper v1.12.0
 	github.com/stretchr/testify v1.8.4
 	gocloud.dev v0.22.0
-	golang.org/x/net v0.19.0
+	golang.org/x/net v0.21.0
 	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1
 	google.golang.org/grpc v1.54.0
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.1.0
@@ -149,12 +149,12 @@ require (
 	go.mongodb.org/mongo-driver v1.8.2 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	go.uber.org/zap v1.21.0 // indirect
-	golang.org/x/crypto v0.17.0 // indirect
+	golang.org/x/crypto v0.21.0 // indirect
 	golang.org/x/mod v0.12.0 // indirect
 	golang.org/x/oauth2 v0.7.0 // indirect
 	golang.org/x/sync v0.3.0 // indirect
-	golang.org/x/sys v0.15.0 // indirect
-	golang.org/x/term v0.15.0 // indirect
+	golang.org/x/sys v0.18.0 // indirect
+	golang.org/x/term v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/tools v0.13.0 // indirect
@@ -193,6 +193,7 @@ replace (
 	github.com/nats-io/nats-server/v2 v2.7.2 => github.com/nats-io/nats-server/v2 v2.10.2
 	github.com/nats-io/nkeys v0.4.5 => github.com/nats-io/nkeys v0.4.6
 	go.opentelemetry.io/contrib v0.20.0 => go.opentelemetry.io/contrib v1.27.0
+	golang.org/x/net v0.19.0 => golang.org/x/net v0.23.0
 	google.golang.org/grpc => google.golang.org/grpc v1.56.3
 )
 
