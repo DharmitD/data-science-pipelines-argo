@@ -31,5 +31,5 @@ jobs:
       run: cd ./frontend && npm ci
 
     - name: Run Frontend Tests
-      run: cd ./frontend && npm run test:ci:prow
+      run: cd ./frontend && npm run test:ci
       
