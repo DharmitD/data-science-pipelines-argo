@@ -1,0 +1,36 @@
+name: KFP SDK Execution Tests
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'sdk/python/**'
+      - 'api/v2alpha1/**'
+      - 'test/presubmit-sdk-execution-tests.sh'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'sdk/python/**'
+      - 'api/v2alpha1/**'
+      - 'test/presubmit-sdk-execution-tests.sh'
+  workflow_dispatch:
+
+jobs:
+  sdk-execution-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies and run tests
+      run: |
+        chmod +x ./test/presubmit-sdk-execution-tests.sh
+        ./test/presubmit-sdk-execution-tests.sh
