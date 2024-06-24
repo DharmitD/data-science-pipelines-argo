@@ -32,5 +32,7 @@ jobs:
 
     - name: Install dependencies and run tests
       run: |
+        sudo apt-get update
+        sudo apt-get install -y protobuf-compiler
         chmod +x ./test/presubmit-sdk-execution-tests.sh
         ./test/presubmit-sdk-execution-tests.sh
