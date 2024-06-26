@@ -13,6 +13,7 @@ on:
     paths:
       - 'sdk/python/**'
       - 'test/presubmit-yapf-sdk.sh'
+  workflow_dispatch:
 
 jobs:
   yapf-sdk:
