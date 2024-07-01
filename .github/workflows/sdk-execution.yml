@@ -1,4 +1,4 @@
-name: k8s execution tests
+name: kFP SDK execution tests
 
 on:
   push:
