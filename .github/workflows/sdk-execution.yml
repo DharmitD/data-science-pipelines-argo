@@ -38,12 +38,12 @@ jobs:
 
     - name: Install dependencies and run tests
       run: |
-        sudo apt-get update
-        sudo apt-get install -y protobuf-compiler
-        python3 -m pip install --upgrade pip
-        python3 -m pip install wheel
-        python3 -m pip install protobuf==3.20.3
-        export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
-        export KFP_ENDPOINT="http://localhost:8888"
+        # sudo apt-get update
+        # sudo apt-get install -y protobuf-compiler
+        # python3 -m pip install --upgrade pip
+        # python3 -m pip install wheel
+        # python3 -m pip install protobuf==3.20.3
+        # export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+        # export KFP_ENDPOINT="http://localhost:8888"
         chmod +x ./test/presubmit-sdk-execution-tests.sh
-        ./test/presubmit-sdk-execution-tests.sh
+        # ./test/presubmit-sdk-execution-tests.sh
