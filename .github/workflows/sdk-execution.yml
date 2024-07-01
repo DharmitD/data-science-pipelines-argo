@@ -44,5 +44,6 @@ jobs:
         # python3 -m pip install wheel
         # python3 -m pip install protobuf==3.20.3
         # export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+        export KFP_ENDPOINT="http://localhost:8888"
         chmod +x ./test/presubmit-sdk-execution-tests.sh
         ./test/presubmit-sdk-execution-tests.sh
