@@ -1,0 +1,48 @@
+name: KFP SDK Execution Tests
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'sdk/python/**'
+      - 'api/v2alpha1/**'
+      - 'test/presubmit-sdk-execution-tests.sh'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'sdk/python/**'
+      - 'api/v2alpha1/**'
+      - 'test/presubmit-sdk-execution-tests.sh'
+  workflow_dispatch:
+
+jobs:
+  sdk-execution-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Create KFP cluster
+      uses: ./.github/actions/kfp-cluster
+
+    - name: Forward API port
+      run: ./scripts/deploy/github/forward-port.sh "kubeflow" "ml-pipeline" 8888 8888
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies and run tests
+      run: |
+        # sudo apt-get update
+        # sudo apt-get install -y protobuf-compiler
+        # python3 -m pip install --upgrade pip
+        # python3 -m pip install wheel
+        # python3 -m pip install protobuf==3.20.3
+        # export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+        chmod +x ./test/presubmit-sdk-execution-tests.sh
+        ./test/presubmit-sdk-execution-tests.sh
