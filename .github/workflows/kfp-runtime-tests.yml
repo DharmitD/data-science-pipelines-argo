@@ -28,5 +28,6 @@ jobs:
 
       - name: Run KFP Runtime Code Tests
         run: |
+          export PULL_NUMBER="10989"
           chmod +x ./test/presubmit-test-kfp-runtime-code.sh
           ./test/presubmit-test-kfp-runtime-code.sh
