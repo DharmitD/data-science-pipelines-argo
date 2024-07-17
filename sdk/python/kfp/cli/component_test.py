@@ -590,7 +590,6 @@ class Test(unittest.TestCase):
             result = self.runner.invoke(
                 self.cli,
                 [
-                    'component',  # Updated the command to 'component build'
                     'build',
                     str(self._working_dir), f'--kfp-package-path={package_dir}'
                 ],
