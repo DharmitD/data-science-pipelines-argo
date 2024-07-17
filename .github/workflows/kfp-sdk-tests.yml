@@ -28,6 +28,9 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install dependencies
+        run: pip install -r ./test/sdk-execution-tests/requirements.txt
+
       - name: Run SDK Tests
         run: |
           chmod +x ./test/presubmit-tests-sdk.sh
