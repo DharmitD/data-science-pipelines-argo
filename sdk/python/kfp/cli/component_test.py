@@ -597,7 +597,6 @@ class Test(unittest.TestCase):
         
         # Added logging for stdout and stderr
         print(f"stdout: {result.stdout}")
-        print(f"stderr: {result.stderr}")
     
         # Check the exit code and log stderr if it is non-zero
         self.assertEqual(result.exit_code, 0, result.stderr)
