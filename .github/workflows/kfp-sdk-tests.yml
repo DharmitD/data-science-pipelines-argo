@@ -2,14 +2,15 @@ name: KFP SDK Tests
 
 on:
   push:
-    branches: [master]
-
-  pull_request:
+    branches:
+      - master
     paths:
-      - '.github/workflows/kfp-sdk-tests.yml'
       - 'sdk/**'
       - 'test/presubmit-tests-sdk.sh'
-
+  pull_request:
+    paths:
+      - 'sdk/**'
+      - 'test/presubmit-tests-sdk.sh'
   workflow_dispatch:
 
 jobs:
@@ -17,21 +18,29 @@ jobs:
     runs-on: ubuntu-latest
     # strategy:
     #   matrix:
-    #     python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+    #     python-version: [3.8, 3.9, 3.10, 3.11, 3.12]
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
 
-      - name: Install dependencies
-        run: pip install -r ./test/sdk-execution-tests/requirements.txt
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install coveralls==1.9.2
+        python3 -m pip install $(grep 'absl-py==' sdk/python/requirements-dev.txt)
+        python3 -m pip install $(grep 'docker==' sdk/python/requirements-dev.txt)
+        python3 -m pip install $(grep 'pytest==' sdk/python/requirements-dev.txt)
+        python3 -m pip install $(grep 'pytest-xdist==' sdk/python/requirements-dev.txt)
+        python3 -m pip install $(grep 'pytest-cov==' sdk/python/requirements-dev.txt)
+        python3 -m pip install --upgrade protobuf
+        python3 -m pip install sdk/python
 
-      - name: Run SDK Tests
-        run: |
-          chmod +x ./test/presubmit-tests-sdk.sh
-          ./test/presubmit-tests-sdk.sh
+    - name: Run tests
+      run: |
+        pytest sdk/python/kfp --ignore=sdk/python/kfp/deprecated --cov=kfp -v
