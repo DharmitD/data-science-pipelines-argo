@@ -594,6 +594,11 @@ class Test(unittest.TestCase):
                     str(self._working_dir), f'--kfp-package-path={package_dir}'
                 ],
             )
+        
+        # Added logging for stdout and stderr
+        if result.exit_code != 0:
+            print(f"stdout: {result.stdout}")
+            print(f"stderr: {result.stderr}")
         self.assertEqual(result.exit_code, 0)
         self._docker_client.api.build.assert_called_once()
         self.assert_file_exists('Dockerfile')
