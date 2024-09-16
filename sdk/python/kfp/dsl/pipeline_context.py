@@ -101,13 +101,15 @@ class Pipeline:
         """Gets the default pipeline."""
         return Pipeline._default_pipeline
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, execution_caching_default: bool = True):
         """Creates a new instance of Pipeline.
 
         Args:
             name: The name of the pipeline.
+            execution_caching_default: Whether caching is enabled for the tasks by default.
         """
         self.name = name
+        self.execution_caching_default = execution_caching_default
         self.tasks = {}
         # Add the root group.
         self.groups = [

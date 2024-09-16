@@ -86,6 +86,7 @@ def build_task_spec_for_task(
     task: pipeline_task.PipelineTask,
     parent_component_inputs: pipeline_spec_pb2.ComponentInputsSpec,
     tasks_in_current_dag: List[str],
+    execution_caching_default: bool = True,
 ) -> pipeline_spec_pb2.PipelineTaskSpec:
     """Builds PipelineTaskSpec for a pipeline task.
 
@@ -106,6 +107,7 @@ def build_task_spec_for_task(
     producer task.
 
     Args:
+        execution_caching_default:
         task: The task to build a PipelineTaskSpec for.
         parent_component_inputs: The task's parent component's input specs.
         tasks_in_current_dag: The list of tasks names for tasks in the same dag.
@@ -122,7 +124,9 @@ def build_task_spec_for_task(
     pipeline_task_spec.component_ref.name = (
         utils.sanitize_component_name(task.name))
     pipeline_task_spec.caching_options.enable_cache = (
-        task._task_spec.enable_caching)
+        task._task_spec.enable_caching if task._task_spec.enable_caching is not None
+        else execution_caching_default
+    )
 
     if task._task_spec.retry_policy is not None:
         pipeline_task_spec.retry_policy.CopyFrom(
@@ -1218,10 +1222,12 @@ def build_spec_by_group(
     name_to_for_loop_group: Mapping[str, tasks_group.ParallelFor],
     platform_spec: pipeline_spec_pb2.PlatformSpec,
     is_compiled_component: bool,
+    execution_caching_default: bool = True,
 ) -> None:
     """Generates IR spec given a TasksGroup.
 
     Args:
+        execution_caching_default:
         pipeline_spec: The pipeline_spec to update in place.
         deployment_config: The deployment_config to hold all executors. The
             spec is updated in place.
@@ -1276,6 +1282,7 @@ def build_spec_by_group(
                 task=subgroup,
                 parent_component_inputs=group_component_spec.input_definitions,
                 tasks_in_current_dag=tasks_in_current_dag,
+                execution_caching_default=execution_caching_default,
             )
             task_name_to_task_spec[subgroup.name] = subgroup_task_spec
             subgroup_component_spec = build_component_spec_for_task(
@@ -1850,10 +1857,12 @@ def create_pipeline_spec(
     pipeline: pipeline_context.Pipeline,
     component_spec: structures.ComponentSpec,
     pipeline_outputs: Optional[Any] = None,
+    execution_caching_default: bool = True,
 ) -> Tuple[pipeline_spec_pb2.PipelineSpec, pipeline_spec_pb2.PlatformSpec]:
     """Creates a pipeline spec object.
 
     Args:
+        execution_caching_default:
         pipeline: The instantiated pipeline object.
         component_spec: The component spec structures.
         pipeline_outputs: The pipeline outputs via return.
@@ -1932,6 +1941,7 @@ def create_pipeline_spec(
             name_to_for_loop_group=name_to_for_loop_group,
             platform_spec=platform_spec,
             is_compiled_component=False,
+            execution_caching_default=execution_caching_default,
         )
 
     build_exit_handler_groups_recursively(

@@ -37,9 +37,11 @@ class GraphComponent(base_component.BaseComponent):
         component_spec: structures.ComponentSpec,
         pipeline_func: Callable,
         display_name: Optional[str] = None,
+        execution_caching_default: bool = True,
     ):
         super().__init__(component_spec=component_spec)
         self.pipeline_func = pipeline_func
+        self.execution_caching_default = execution_caching_default
 
         args_list = []
         signature = inspect.signature(pipeline_func)
@@ -54,7 +56,7 @@ class GraphComponent(base_component.BaseComponent):
                 ))
 
         with pipeline_context.Pipeline(
-                self.component_spec.name) as dsl_pipeline:
+                self.component_spec.name, execution_caching_default=execution_caching_default) as dsl_pipeline:
             pipeline_outputs = pipeline_func(*args_list)
 
         if not dsl_pipeline.tasks:
@@ -69,6 +71,7 @@ class GraphComponent(base_component.BaseComponent):
             pipeline=dsl_pipeline,
             component_spec=self.component_spec,
             pipeline_outputs=pipeline_outputs,
+            execution_caching_default=self.execution_caching_default,
         )
 
         pipeline_root = getattr(pipeline_func, 'pipeline_root', None)

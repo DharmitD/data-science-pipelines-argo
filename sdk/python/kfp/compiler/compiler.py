@@ -22,7 +22,7 @@ from typing import Any, Dict, Optional
 from kfp.compiler import pipeline_spec_builder as builder
 from kfp.dsl import base_component
 from kfp.dsl.types import type_utils
-
+from kfp.dsl.pipeline_context import Pipeline
 
 class Compiler:
     """Compiles pipelines composed using the KFP SDK DSL to a YAML pipeline
@@ -53,10 +53,12 @@ class Compiler:
         pipeline_name: Optional[str] = None,
         pipeline_parameters: Optional[Dict[str, Any]] = None,
         type_check: bool = True,
+        execution_caching_default: bool = True
     ) -> None:
         """Compiles the pipeline or component function into IR YAML.
 
         Args:
+            execution_caching_default:
             pipeline_func: Pipeline function constructed with the ``@dsl.pipeline`` or component constructed with the ``@dsl.component`` decorator.
             package_path: Output YAML file path. For example, ``'~/my_pipeline.yaml'`` or ``'~/my_component.yaml'``.
             pipeline_name: Name of the pipeline.
@@ -71,6 +73,11 @@ class Compiler:
                     'subclass of `base_component.BaseComponent` or '
                     '`Callable` constructed with @dsl.pipeline '
                     f'decorator. Got: {type(pipeline_func)}')
+
+            pipeline = Pipeline(
+                name=pipeline_name,
+                execution_caching_default=execution_caching_default
+            )
 
             pipeline_spec = builder.modify_pipeline_spec_with_override(
                 pipeline_spec=pipeline_func.pipeline_spec,
