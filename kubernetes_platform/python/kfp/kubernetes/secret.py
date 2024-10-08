@@ -19,10 +19,13 @@ from kfp.dsl import PipelineTask
 from kfp.kubernetes import common
 from kfp.kubernetes import kubernetes_executor_config_pb2 as pb
 
+from typing import Union
+from kfp.dsl.pipeline_channel import PipelineParameterChannel
+
 
 def use_secret_as_env(
     task: PipelineTask,
-    secret_name: str,
+    secret_name: Union[str, PipelineParameterChannel],
     secret_key_to_env: Dict[str, str],
 ) -> PipelineTask:
     """Use a Kubernetes Secret as an environment variable as described by the `Kubernetes documentation
@@ -36,9 +39,13 @@ def use_secret_as_env(
     Returns:
         Task object with updated secret configuration.
     """
+    val = secret_name
+
+    # If secret_name is a PipelineParameterChannel, use its name for runtime substitution
+    if isinstance(secret_name, PipelineParameterChannel):
+        val = f"{{$.inputs.parameters[\"{secret_name.name}\"]}}"
 
     msg = common.get_existing_kubernetes_config_as_message(task)
-
     key_to_env = [
         pb.SecretAsEnv.SecretKeyToEnvMap(
             secret_key=secret_key,
@@ -46,12 +53,11 @@ def use_secret_as_env(
         ) for secret_key, env_var in secret_key_to_env.items()
     ]
     secret_as_env = pb.SecretAsEnv(
-        secret_name=secret_name,
+        secret_name=val,
         key_to_env=key_to_env,
     )
 
     msg.secret_as_env.append(secret_as_env)
-
     task.platform_config['kubernetes'] = json_format.MessageToDict(msg)
 
     return task

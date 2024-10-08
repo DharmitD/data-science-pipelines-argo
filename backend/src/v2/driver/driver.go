@@ -17,9 +17,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/kubeflow/pipelines/backend/src/v2/objectstore"
 	"strconv"
+	"strings"
 	"time"
+
+	"github.com/kubeflow/pipelines/backend/src/v2/objectstore"
 
 	"github.com/golang/glog"
 	"github.com/golang/protobuf/ptypes/timestamp"
@@ -550,6 +552,35 @@ func extendPodSpecPatch(
 	// Get secret env information
 	for _, secretAsEnv := range kubernetesExecutorConfig.GetSecretAsEnv() {
 		for _, keyToEnv := range secretAsEnv.GetKeyToEnv() {
+			secretName := secretAsEnv.GetSecretName()
+
+			// Handle placeholders like {{$.inputs.parameters["my_secret"]}}
+			if strings.HasPrefix(secretName, "{{") && strings.HasSuffix(secretName, "}}") {
+				// Extract key between the placeholders
+				key := secretName[3 : len(secretName)-2] // e.g., $.inputs.parameters["my_secret"]
+
+				// Ensure it's referencing parameters
+				if strings.HasPrefix(key, "$.inputs.parameters[") && strings.HasSuffix(key, "]") {
+					paramKey := key[21 : len(key)-1] // Extract the parameter name, e.g., "my_secret"
+
+					// Fetch the actual value from runtime input parameters
+					inputParams, _, err := dag.Execution.GetParameters()
+					if err != nil {
+						return fmt.Errorf("failed to get input parameters: %v", err)
+					}
+
+					val, ok := inputParams[paramKey]
+					if !ok {
+						return fmt.Errorf("dynamic secret key %s not found", paramKey)
+					}
+
+					secretName = val.GetStringValue()
+					if secretName == "" {
+						return fmt.Errorf("secret name for key %s is empty", paramKey)
+					}
+				}
+			}
+
 			secretEnvVar := k8score.EnvVar{
 				Name: keyToEnv.GetEnvVar(),
 				ValueFrom: &k8score.EnvVarSource{
