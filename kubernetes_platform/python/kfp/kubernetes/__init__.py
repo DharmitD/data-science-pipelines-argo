@@ -27,6 +27,7 @@ __all__ = [
     'set_image_pull_policy',
     'use_field_path_as_env',
     'set_image_pull_secrets',
+    'set_k8s_pipeline_config',
     'set_timeout',
     'use_config_map_as_env',
     'use_config_map_as_volume',
@@ -51,3 +52,5 @@ from kfp.kubernetes.volume import add_ephemeral_volume
 from kfp.kubernetes.volume import CreatePVC
 from kfp.kubernetes.volume import DeletePVC
 from kfp.kubernetes.volume import mount_pvc
+
+from kubernetes_platform.python.kfp.kubernetes.pipeline_config import set_k8s_pipeline_config
