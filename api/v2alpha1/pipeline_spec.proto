@@ -1100,6 +1100,8 @@ message SinglePlatformSpec {
 message PipelineConfig {
   // Set TTL at pipeline-level
   optional int32 pipelineTtl = 1;
+  optional string semaphore_name = 2;
+  optional string mutex_name = 3;
 }
 
 message PlatformDeploymentConfig {

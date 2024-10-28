@@ -26,3 +26,39 @@ class PipelineConfig:
 
     def get_ttl(self) -> int:
         return int(self.__ttl)
+
+    def set_semaphore_name(self, semaphore_name: str):
+        """
+        Sets the name of the semaphore to control pipeline concurrency.
+
+        Args:
+            semaphore_name (str): Name of the semaphore.
+        """
+        self.__semaphore_name = semaphore_name.strip()
+
+    def get_semaphore_name(self) -> str:
+        """
+        Retrieves the name of the semaphore.
+
+        Returns:
+            str: Name of the semaphore.
+        """
+        return self.__semaphore_name
+
+    def set_mutex_name(self, mutex_name: str):
+        """
+        Sets the name of the mutex to ensure mutual exclusion.
+
+        Args:
+            mutex_name (str): Name of the mutex.
+        """
+        self.__mutex_name = mutex_name.strip()
+
+    def get_mutex_name(self) -> str:
+        """
+        Retrieves the name of the mutex.
+
+        Returns:
+            str: Name of the mutex.
+        """
+        return self.__mutex_name

@@ -2072,6 +2072,8 @@ def _merge_pipeline_config(pipelineConfig: pipeline_config.PipelineConfig,
     pipeline_config_json = json_format.ParseDict(
         {'pipelineConfig': {
             'pipelineTtl': pipelineConfig.get_ttl(),
+            'semaphoreName': pipelineConfig.get_semaphore_name(),
+            'mutexName': pipelineConfig.get_mutex_name(),
         }}, platformSpec.platforms['kubernetes'])
 
     return platformSpec
