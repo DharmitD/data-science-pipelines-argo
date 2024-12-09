@@ -203,7 +203,6 @@ func (w *Workflow) GenerateRetryExecution() (ExecutionSpec, []string, error) {
 	newWF := w.Workflow.DeepCopy()
 	// Delete/reset fields which indicate workflow completed
 	delete(newWF.Labels, common.LabelKeyCompleted)
-	// Delete/reset fields which indicate workflow is finished being persisted to the database
 	delete(newWF.Labels, LabelKeyWorkflowPersistedFinalState)
 	newWF.ObjectMeta.Labels[common.LabelKeyPhase] = string(workflowapi.NodeRunning)
 	newWF.Status.Phase = workflowapi.WorkflowRunning
@@ -216,38 +215,64 @@ func (w *Workflow) GenerateRetryExecution() (ExecutionSpec, []string, error) {
 
 	// Iterate the previous nodes. If it was successful Pod carry it forward
 	newWF.Status.Nodes = make(map[string]workflowapi.NodeStatus)
-	onExitNodeName := w.ObjectMeta.Name + ".onExit"
 	var podsToDelete []string
 	for _, node := range w.Status.Nodes {
 		oldNodeID := RetrievePodName(*w.Workflow, node)
+
+		// Check if the node is a lifecycle hook node
+		isLifecycleHookNode := strings.Contains(node.Name, ".hooks.exit")
+
 		switch node.Phase {
 		case workflowapi.NodeSucceeded, workflowapi.NodeSkipped:
-			if !strings.HasPrefix(node.Name, onExitNodeName) {
+			// Carry forward successful/skipped nodes that are not lifecycle hooks
+			if !isLifecycleHookNode {
 				nodeName := RetrievePodName(*newWF, node)
 				newWF.Status.Nodes[nodeName] = node
-				continue
 			}
 		case workflowapi.NodeError, workflowapi.NodeFailed, workflowapi.NodeOmitted:
-			if !strings.HasPrefix(node.Name, onExitNodeName) && node.Type == workflowapi.NodeTypeDAG {
+			if isLifecycleHookNode {
+				continue
+			}
+			if node.Type == workflowapi.NodeTypeDAG {
+				// Reset DAG nodes for retry
 				newNode := node.DeepCopy()
 				newNode.Phase = workflowapi.NodeRunning
 				newNode.Message = ""
 				newNode.FinishedAt = metav1.Time{}
 				nodeName := RetrievePodName(*newWF, *newNode)
 				newWF.Status.Nodes[nodeName] = *newNode
-				continue
 			}
-			// do not add this status to the node. pretend as if this node never existed.
 		default:
 			// Do not allow retry of workflows with pods in Running/Pending phase
 			return nil, nil, NewInternalServerError(
 				errors.New("workflow cannot be retried"),
 				"Workflow cannot be retried with node %s in %s phase", oldNodeID, node.Phase)
 		}
+
 		if node.Type == workflowapi.NodeTypePod {
 			podsToDelete = append(podsToDelete, oldNodeID)
 		}
 	}
+
+	// Add Lifecycle Hooks to tasks
+	for i, template := range newWF.Spec.Templates {
+		if template.DAG != nil { // Ensure the template is a DAG
+			for j, task := range template.DAG.Tasks {
+				if task.Hooks == nil {
+					task.Hooks = make(map[workflowapi.LifecycleEvent]workflowapi.LifecycleHook)
+				}
+
+				// Assign a lifecycle hook for exit
+				task.Hooks["exit"] = workflowapi.LifecycleHook{
+					Template: task.Template, // Use the task's own template as the exit hook
+				}
+
+				// Update the task in the DAG template
+				newWF.Spec.Templates[i].DAG.Tasks[j] = task
+			}
+		}
+	}
+
 	return NewWorkflow(newWF), podsToDelete, nil
 }
 
